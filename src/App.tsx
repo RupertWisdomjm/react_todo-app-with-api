@@ -197,7 +197,9 @@ const TodoList: React.FC<TodoListProps> = ({
       />
     ))}
 
-    {tempTodo && <TodoItem todo={tempTodo} isLoading isEditing={false} editValue="" />}
+    {tempTodo && (
+      <TodoItem todo={tempTodo} isLoading isEditing={false} editValue="" />
+    )}
   </section>
 );
 
