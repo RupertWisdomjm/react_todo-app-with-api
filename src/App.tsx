@@ -84,81 +84,81 @@ const TodoItem: React.FC<TodoItemProps> = ({
       data-cy="Todo"
       className={classNames('todo', { completed: todo.completed })}
     >
-    <label className="todo__status-label">
-      <input
-        data-cy="TodoStatus"
-        type="checkbox"
-        className="todo__status"
-        checked={todo.completed}
-        disabled={!onToggle}
-        onChange={() => onToggle?.(todo.id, todo.completed)}
-      />
-    </label>
-
-    {isEditing ? (
-      <form
-        onSubmit={event => {
-          event.preventDefault();
-          onSaveEdit?.(todo.id, todo.title);
-        }}
-      >
+      <label className="todo__status-label">
         <input
-          data-cy="TodoTitleField"
-          type="text"
-          className="todo__title-field"
-          ref={editInputRef}
-          autoFocus
-          value={editValue}
-          onChange={event => onEditChange?.(event.target.value)}
-          onBlur={() => {
-            if (isCancelledByEscRef.current) {
-              isCancelledByEscRef.current = false;
+          data-cy="TodoStatus"
+          type="checkbox"
+          className="todo__status"
+          checked={todo.completed}
+          disabled={!onToggle}
+          onChange={() => onToggle?.(todo.id, todo.completed)}
+        />
+      </label>
 
-              return;
-            }
-
+      {isEditing ? (
+        <form
+          onSubmit={event => {
+            event.preventDefault();
             onSaveEdit?.(todo.id, todo.title);
           }}
-          onKeyUp={event => {
-            if (event.key === 'Escape') {
-              isCancelledByEscRef.current = true;
-              onCancelEdit?.();
-            }
-          }}
-        />
-      </form>
-    ) : (
-      <>
-        <span
-          data-cy="TodoTitle"
-          className="todo__title"
-          onDoubleClick={() => onStartEdit?.(todo.id, todo.title)}
         >
-          {todo.title}
-        </span>
+          <input
+            data-cy="TodoTitleField"
+            type="text"
+            className="todo__title-field"
+            ref={editInputRef}
+            autoFocus
+            value={editValue}
+            onChange={event => onEditChange?.(event.target.value)}
+            onBlur={() => {
+              if (isCancelledByEscRef.current) {
+                isCancelledByEscRef.current = false;
 
-        {onDelete && (
-          <button
-            type="button"
-            className="todo__remove"
-            data-cy="TodoDelete"
-            onClick={() => onDelete(todo.id)}
+                return;
+              }
+
+              onSaveEdit?.(todo.id, todo.title);
+            }}
+            onKeyUp={event => {
+              if (event.key === 'Escape') {
+                isCancelledByEscRef.current = true;
+                onCancelEdit?.();
+              }
+            }}
+          />
+        </form>
+      ) : (
+        <>
+          <span
+            data-cy="TodoTitle"
+            className="todo__title"
+            onDoubleClick={() => onStartEdit?.(todo.id, todo.title)}
           >
-            ×
-          </button>
-        )}
-      </>
-    )}
+            {todo.title}
+          </span>
 
-    <div
-      data-cy="TodoLoader"
-      className={classNames('modal overlay', {
-        'is-active': isLoading,
-      })}
-    >
-      <div className="modal-background has-background-white-ter" />
-      <div className="loader" />
-    </div>
+          {onDelete && (
+            <button
+              type="button"
+              className="todo__remove"
+              data-cy="TodoDelete"
+              onClick={() => onDelete(todo.id)}
+            >
+              ×
+            </button>
+          )}
+        </>
+      )}
+
+      <div
+        data-cy="TodoLoader"
+        className={classNames('modal overlay', {
+          'is-active': isLoading,
+        })}
+      >
+        <div className="modal-background has-background-white-ter" />
+        <div className="loader" />
+      </div>
     </div>
   );
 };
