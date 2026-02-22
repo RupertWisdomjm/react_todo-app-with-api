@@ -76,11 +76,14 @@ const TodoItem: React.FC<TodoItemProps> = ({
   onEditChange,
   onSaveEdit,
   onCancelEdit,
-}) => (
-  <div
-    data-cy="Todo"
-    className={classNames('todo', { completed: todo.completed })}
-  >
+}) => {
+  const isCancelledByEscRef = useRef(false);
+
+  return (
+    <div
+      data-cy="Todo"
+      className={classNames('todo', { completed: todo.completed })}
+    >
     <label className="todo__status-label">
       <input
         data-cy="TodoStatus"
@@ -107,9 +110,18 @@ const TodoItem: React.FC<TodoItemProps> = ({
           autoFocus
           value={editValue}
           onChange={event => onEditChange?.(event.target.value)}
-          onBlur={() => onSaveEdit?.(todo.id, todo.title)}
-          onKeyDown={event => {
+          onBlur={() => {
+            if (isCancelledByEscRef.current) {
+              isCancelledByEscRef.current = false;
+
+              return;
+            }
+
+            onSaveEdit?.(todo.id, todo.title);
+          }}
+          onKeyUp={event => {
             if (event.key === 'Escape') {
+              isCancelledByEscRef.current = true;
               onCancelEdit?.();
             }
           }}
@@ -147,8 +159,9 @@ const TodoItem: React.FC<TodoItemProps> = ({
       <div className="modal-background has-background-white-ter" />
       <div className="loader" />
     </div>
-  </div>
-);
+    </div>
+  );
+};
 
 type TodoListProps = {
   todos: Todo[];
@@ -471,7 +484,7 @@ export const App: React.FC = () => {
         ),
       );
     } catch {
-      setErrorMessage('Unable to update todos');
+      setErrorMessage('Unable to update a todo');
     } finally {
       setProcessingIds(prevIds =>
         prevIds.filter(processingId => !idsToUpdate.includes(processingId)),
